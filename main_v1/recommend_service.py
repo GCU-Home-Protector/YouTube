@@ -30,10 +30,8 @@ def recommend(state, liked_songs):
 
 
 def filter_videos_corrected(dataframe, tag, top_n=5):
-    # 조회수 당 좋아요 비율
-    dataframe['like_ratio'] = (dataframe['like_count'] / dataframe['view_count']) * 100
     emotion = dataframe[dataframe['tag'] == tag]
     # 내림차순 정렬
-    sorted_videos = emotion.sort_values(by='like_ratio', ascending=False)
+    sorted_videos = emotion.sort_values(by='view_count', ascending=False)
     # 추천 진행
     return sorted_videos.head(top_n)['title'].iloc[0] + '.mp3'
