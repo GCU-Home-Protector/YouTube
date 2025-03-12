@@ -3,7 +3,7 @@ name: Dockerize & Push AI Module Image to ECR (CI Step)
 on:
   pull_request:
     types : [opened, synchronize]
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 env:
   AWS_REGION: ap-northeast-2                   
