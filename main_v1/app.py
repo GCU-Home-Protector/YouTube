@@ -143,7 +143,8 @@ def format_response(recommended_song, recommended_song_url, state, score=None):
     return response
 
 def ok(response):
-    return json.dumps(response, ensure_ascii=False).encode('utf8')
+    # return json.dumps(response, ensure_ascii=False).encode('utf8')
+    return jsonify(response)
 
 def error_message(message, status):
     return jsonify({'response': message}), status
