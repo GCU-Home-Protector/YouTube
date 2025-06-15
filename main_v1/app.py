@@ -134,8 +134,8 @@ def return_url(recommended_song):
 
 def format_response(recommended_song, recommended_song_url, state, score=None):
     response = {
-        "recommended_song": recommended_song,
-        "recommended_song_url": recommended_song_url,
+        "recommendSong": recommended_song,
+        "recommendSongUrl": recommended_song_url,
         "detected_emotion": state
     }
     if score:
