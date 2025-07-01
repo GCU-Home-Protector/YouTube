@@ -41,6 +41,41 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           # echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      - name: Checkout k8s repository
+        uses: actions/checkout@v4
+        with:
+          repository: GCU-Home-Protector/protector-infra
+          ref: main
+          token: ${{secrets.ACTION_TOKEN}}
+          path: home-protector-infra
+
+      - name: Update AI image
+        if: success()
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd home-protector-infra/overlays/develop/ai
+          sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}.*$|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}|" patch-image.yaml
+          cat patch-image.yaml
+
+      - name: Push updated manifest
+        run: |
+          cd home-protector-infra
+
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add overlays/develop/ai/patch-image.yaml
+            git commit -m "chore : Update AI image tag to ${{ github.sha }}"
+          else
+            echo "No changes detected, creating empty commit to trigger ArgoCD"
+            git commit --allow-empty -m "chore : Tag update fail"
+          fi
+
+          git push origin main
+
       # - name: Build and push
       #   uses: docker/build-push-action@v3
       #   with:
